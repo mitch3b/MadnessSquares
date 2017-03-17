@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+//It's expected that the user filled out squares and then assigned
+//numbers randomly. Take them in unsorted and sort them so that index
+//is the score
+var unsortedWinners = [
+  [9, 8, 7, 2, 3, 0, 4, 1, 5, 6],
+  [1, 9, 7, 8, 4, 0, 2, 5, 3, 6],
+  [8, 1, 2, 7, 3, 9, 4, 5, 0, 6],
+  [7, 5, 0, 1, 9, 2, 6, 3, 4, 8],
+  [9, 3, 0, 1, 5, 4, 6, 8, 2, 7],
+  [5, 3, 0, 8, 7, 2, 9, 1, 6, 4]
+]
+var unsortedLosers = [
+  [4, 1, 8, 0, 2, 3, 9, 5, 6, 7],
+  [3, 4, 6, 5, 0, 7, 1, 9, 8, 2],
+  [1, 2, 9, 3, 0, 5, 6, 7, 8, 4],
+  [8, 5, 0, 7, 4, 6, 2, 3, 1, 9],
+  [0, 8, 4, 6, 1, 7, 5, 3, 9, 2],
+  [0, 3, 5, 6, 7, 2, 9, 4, 1, 8]
+];
+
+var unsortedSquares = [
+ ["Dean", "Shawn M", "Ronnie C", "Tim T", "Croman", "Sherry", "Lori G (BS)", "Briana F", "Ken S", "Danny L"],
+ ["Mike P", "Dean", "Paul G", "Eddie M", "Tom G", "Kim M", "Don M", "Sothea", "Steve C", "Jim P"],
+ ["Drew P", "Lori G (NG)", "Brandon M", "Joel B", "Julie P", "Ken P", "Lou M", "Bob (Painter)", "Danny L", "BHill"],
+ ["Sarah L", "Eddie M", "CJM", "John C", "Tristan", "Susan H", "Matt P", "Paintfinger", "Dayon", "Shawn W"],
+ ["AJ", "Matt P", "Sonny", "Gary S", "Kevnet", "Bonnie", "Paul G", "Don M", "Mark P", "Tom G"],
+ ["Ryan F", "Jay B", "Jim P", "Ken P", "Lori G", "Jim B", "Roger", "Paul V", "Dave T", "Rich G"],
+ ["Jim P", "Ron C", "PJ", "Alex A", "Brandon M", "Sothea", "Dan Truong", "Eddie M", "Bonnie", "Nate F"],
+ ["Mitch", "Don M", "Jared B", "Sherry", "Ann L", "Shannon", "Ron C", "Vic P", "Nate D", "Dor"],
+ ["Tim L", "Tom S", "Roger 2", "Don M", "Bob (Painter)", "Tim T", "Jason C", "Kellie M", "Lori G"],
+ ["Gary S", "Lou M", "Lisa T", "Brian S", "Will D", "Bob E", "Jim P", "Ronnie C", "Keith J", "Sarah L"],
+];
+
+var sortedSquares = [];
+
+function init() {
+  sortedSquares = [
+    [,,,,,,,,,],
+    [,,,,,,,,,],
+    [,,,,,,,,,],
+    [,,,,,,,,,],
+    [,,,,,,,,,],
+    [,,,,,,,,,],
+    [,,,,,,,,,],
+    [,,,,,,,,,],
+    [,,,,,,,,,],
+    [,,,,,,,,,]
+  ];
+
+  refresh();
+}
+
+function refresh() {
+  fillSortedSquares(unsortedWinners, unsortedLosers, unsortedSquares)
+  //Init is used on startup and on a round choice change so try to calculate
+  calculate();
+}
+
+function fillSortedSquares(unsortedWinners, unsortedLosers, unsortedSquares) {
+  var roundIndex = parseInt(document.getElementById("Round_Index").value);
+
+  //Sort the squares so the index refers to the score
+  for(y = 0 ; y < unsortedLosers[roundIndex].length ; y++){
+    for(x = 0 ; x < unsortedWinners[roundIndex].length ; x++){
+      var indexY = unsortedLosers[roundIndex][y];
+      var indexX = unsortedWinners[roundIndex][x];
+
+      sortedSquares[indexY][indexX] = unsortedSquares[y][x];
+    }
+  }
+}
+
+function getWinnerSquare(score1, score2) {
+  if(score1 == score2) {
+    return "";
+  }
+
+  var winnerIndex = Math.max(score1, score2) % 10;
+  var loserIndex = Math.min(score1, score2) % 10;
+
+  return sortedSquares[loserIndex][winnerIndex];
+}
+
+function calculate() {
+    var scoreA = parseInt(document.getElementById("TeamA_Score_Input").value);
+    var scoreB = parseInt(document.getElementById("TeamB_Score_Input").value);
+
+    document.getElementById("TeamA_Score").innerHTML = scoreA;
+    document.getElementById("TeamB_Score").innerHTML = scoreB;
+
+    //Not the most efficient math, but really clean
+    document.getElementById("winner").innerHTML = getWinnerSquare(scoreA, scoreB);
+    document.getElementById("teamAPlusOne").innerHTML = getWinnerSquare(scoreA + 1, scoreB);
+    document.getElementById("teamAPlusTwo").innerHTML = getWinnerSquare(scoreA + 2, scoreB);
+    document.getElementById("teamAPlusThree").innerHTML = getWinnerSquare(scoreA + 3, scoreB);
+    document.getElementById("teamBPlusOne").innerHTML = getWinnerSquare(scoreA, scoreB + 1);
+    document.getElementById("teamBPlusTwo").innerHTML = getWinnerSquare(scoreA, scoreB + 2);
+    document.getElementById("teamBPlusThree").innerHTML = getWinnerSquare(scoreA, scoreB + 3);
+}
+
+window.onload = init;
+</script>
+</head>
+
+<body>
+
+<h1>Square winner calculator</h1>
+
+<table border='1'>
+  <tr>
+    <th>Team</th>
+    <th>Score</th>
+    <th>Winner</th>
+    <th>+1</th>
+    <th>+2</th>
+    <th>+3</th>
+  </tr>
+  <tr>
+    <td>TeamA</td>
+    <td id=TeamA_Score>0</td>
+    <td id=winner>NotAPerson</td>
+    <td id=teamAPlusOne>NotAPerson</td>
+    <td id=teamAPlusTwo>NotAPerson</td>
+    <td id=teamAPlusThree>NotAPerson</td>
+  </tr>
+  <tr>
+    <td>TeamB</td>
+    <td id=TeamB_Score>0</td>
+    <td></td>
+    <td id=teamBPlusOne>NotAPerson</td>
+    <td id=teamBPlusTwo>NotAPerson</td>
+    <td id=teamBPlusThree>NotAPerson</td>
+  </tr>
+</table>
+
+<br>
+<form>
+  Team A:
+  <input type="number" id="TeamA_Score_Input" min="1" max="200" onchange="refresh()">
+</form>
+<br>
+
+<form>
+  Team B:
+  <input type="number" id="TeamB_Score_Input" min="1" max="200" onchange="refresh()">
+</form>
+<br>
+Round of:
+<select id="Round_Index" onchange="refresh()">
+  <option value="0">64</option>
+  <option value="1">32</option>
+  <option value="2">16</option>
+  <option value="3">8</option>
+  <option value="4">4</option>
+  <option value="5">2</option>
+</select>
+<br>
+<button type="button" onclick="calculate()">Try it</button>
+
+<p id="textBlob">
+
+</body>
+</html>
